@@ -12,11 +12,11 @@ You don't play as a human. You play as **Sol** — the soul of the Sun itself, a
 
 ## 🎮 Play It
 
-[INSERT LIVE DEMO LINK — e.g. GitHub Pages / Glitch / Stackblitz]
+[https://solstice-game-jam-2026.vercel.app](https://solstice-game-jam-2026.vercel.app)
 
 ## 📺 Video Demo
 
-[INSERT YOUTUBE LINK]
+[https://youtu.be/zl4c6IrKuCA](https://youtu.be/zl4c6IrKuCA)
 
 ## 📝 Full Submission Post
 
