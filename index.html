@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="SOLSTICE: The Sun Remembers — A 3D atmospheric exploration game. Restore the Sun's lost memories before eternal darkness falls.">
+  <title>SOLSTICE: The Sun Remembers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+
+<body>
+
+  <div id="loading-screen">
+    <div class="loading-sun"></div>
+    <div class="loading-title">SOLSTICE</div>
+    <div class="loading-sub">The Sun Remembers</div>
+    <div class="loading-bar-wrap">
+      <div id="loading-bar"></div>
+    </div>
+    <div id="loading-text">Awakening the world…</div>
+  </div>
+
+  <div id="main-menu" class="hidden">
+    <div class="menu-bg-overlay"></div>
+    <div class="menu-content">
+      <div class="menu-sun-anim"></div>
+      <h1 class="menu-title">SOLSTICE</h1>
+      <p class="menu-subtitle">The Sun Remembers</p>
+      <p class="menu-lore">You are <strong>Sol</strong> &mdash; the very soul of the Sun itself. Not a human being. You
+        are the light that has illuminated the Earth and sustained all life for billions of years.<br><br>But now you
+        have forgotten <em>why</em> you rise. Five ancient memories have been lost. Without them, your light slowly
+        fades. The seasons stop. The world grows dark.<br><br>Explore this world, recover your lost memories, and answer
+        each challenge before your light runs out forever.</p>
+      <button id="btn-new-game" class="menu-btn primary">Begin the Journey</button>
+      <button id="btn-continue" class="menu-btn secondary hidden">Continue the Journey</button>
+      <div class="menu-controls-preview">
+        <span>WASD Move</span>
+        <span class="dot">·</span>
+        <span>Mouse Look</span>
+        <span class="dot">·</span>
+        <span>F Interact</span>
+        <span class="dot">·</span>
+        <span>Shift Sprint</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tutorial-overlay" class="hidden">
+    <div class="tutorial-box">
+      <div class="tutorial-sun-icon">☀️</div>
+      <h2 class="tutorial-title">HOW TO PLAY</h2>
+      <div class="tutorial-grid">
+        <div class="tutorial-card win-card">
+          <div class="tutorial-card-icon">🏆</div>
+          <div class="tutorial-card-label">HOW TO WIN</div>
+          <p>Restore all 5 of Sol's lost memories by reaching each chapter's objective and solving its puzzle. Complete
+            all chapters before Sol's light fades.</p>
+        </div>
+        <div class="tutorial-card lose-card">
+          <div class="tutorial-card-icon">🌑</div>
+          <div class="tutorial-card-label">HOW TO LOSE</div>
+          <p>Sol's Light (the golden bar at the top) drains over time. If it reaches zero before you restore all
+            memories, eternal darkness falls.</p>
+        </div>
+      </div>
+      <div class="tutorial-controls">
+        <div class="ctrl-item"><kbd>WASD</kbd><span>Move</span></div>
+        <div class="ctrl-item"><kbd>Mouse</kbd><span>Look Around</span></div>
+        <div class="ctrl-item"><kbd>F</kbd><span>Interact</span></div>
+        <div class="ctrl-item"><kbd>Shift</kbd><span>Sprint</span></div>
+        <div class="ctrl-item"><kbd>ESC</kbd><span>Pause</span></div>
+      </div>
+      <p class="tutorial-tip">💡 Follow the navigation arrow and distance indicator to find your objective. Each memory
+        you restore refills Sol's light.</p>
+      <button id="tutorial-start-btn" class="tutorial-btn">I Understand — Begin</button>
+    </div>
+  </div>
+
+  <div id="hud" class="hidden">
+    <div id="hud-top">
+      <div id="hud-chapter-info">
+        <div id="chapter-label" class="chapter-label-text"></div>
+        <div id="objective-bar">
+          <span class="obj-label">OBJECTIVE</span>
+          <span id="objective-text"></span>
+        </div>
+      </div>
+
+      <div id="hud-center">
+        <div id="sol-energy-wrap">
+          <div class="sol-energy-header">
+            <span class="sol-energy-icon">☀️</span>
+            <span class="sol-energy-label">SOL'S LIGHT</span>
+            <span id="sol-energy-pct">100%</span>
+          </div>
+          <div class="sol-energy-track">
+            <div id="sol-energy-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="hud-right-panel">
+        <div id="hud-progress">
+          <span class="hud-label">MEMORIES</span>
+          <div id="fragment-dots"></div>
+        </div>
+        <div id="hud-world">
+          <div class="ws-item"><span class="ws-label">FOREST</span>
+            <div class="ws-bar">
+              <div id="ws-forest" class="ws-fill green"></div>
+            </div>
+          </div>
+          <div class="ws-item"><span class="ws-label">VILLAGE</span>
+            <div class="ws-bar">
+              <div id="ws-village" class="ws-fill blue"></div>
+            </div>
+          </div>
+          <div class="ws-item"><span class="ws-label">OCEAN</span>
+            <div class="ws-bar">
+              <div id="ws-ocean" class="ws-fill cyan"></div>
+            </div>
+          </div>
+          <div class="ws-item"><span class="ws-label">LIGHT</span>
+            <div class="ws-bar">
+              <div id="ws-light" class="ws-fill yellow"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="hud-bottom">
+      <div id="controls-hint">
+        <span>WASD · Move</span>
+        <span>Mouse · Look</span>
+        <span>F · Interact</span>
+        <span>Shift · Run</span>
+        <span>ESC · Pause</span>
+      </div>
+      <div id="nav-indicator-wrap">
+        <div id="nav-arrow-container">
+          <svg id="nav-arrow-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <polygon id="nav-arrow-poly" points="20,4 32,32 20,26 8,32" fill="#FFD166" />
+          </svg>
+        </div>
+        <div id="nav-dist"></div>
+        <div id="nav-label"></div>
+      </div>
+      <div id="hud-sol-voice">
+        <div id="sol-voice-text"></div>
+      </div>
+    </div>
+
+    <div id="crosshair">
+      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="4" x2="10" y2="8" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round" />
+        <line x1="10" y1="12" x2="10" y2="16" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"
+          stroke-linecap="round" />
+        <line x1="4" y1="10" x2="8" y2="10" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round" />
+        <line x1="12" y1="10" x2="16" y2="10" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"
+          stroke-linecap="round" />
+      </svg>
+    </div>
+    <div id="interact-prompt" class="hidden">
+      <span id="interact-target-name"></span>
+      <span class="interact-key-hint">Press <kbd>F</kbd> to interact</span>
+    </div>
+
+    <canvas id="minimap-canvas"></canvas>
+    <div id="minimap-label">MAP</div>
+  </div>
+
+  <div id="darkness-warning" class="hidden"></div>
+
+  <div id="chapter-intro-overlay" class="hidden">
+    <div class="intro-box">
+      <div class="intro-genre-badge">3D Exploration · Narrative Puzzle</div>
+      <div id="intro-chapter-num"></div>
+      <div id="intro-location"></div>
+      <div id="intro-text"></div>
+      <div class="intro-objective-wrap">
+        <span class="intro-obj-label">YOUR OBJECTIVE</span>
+        <span id="intro-obj-text"></span>
+      </div>
+      <button id="intro-next-btn" class="intro-btn">Continue ▶</button>
+    </div>
+  </div>
+
+  <div id="puzzle-modal" class="hidden">
+    <div class="puzzle-box">
+      <div id="puzzle-title" class="puzzle-title"></div>
+      <div id="puzzle-area"></div>
+      <div id="puzzle-feedback" class="puzzle-feedback"></div>
+      <div class="puzzle-actions">
+        <button id="puzzle-submit" class="puzzle-btn primary">Confirm Answer</button>
+        <button id="puzzle-close" class="puzzle-btn ghost">Leave Puzzle</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="memory-reveal" class="hidden">
+    <div class="memory-box">
+      <div class="memory-particles" id="memory-particles"></div>
+      <div class="memory-sun-glow"></div>
+      <div id="memory-label"></div>
+      <div id="memory-text"></div>
+      <div id="memory-effect"></div>
+      <button id="memory-continue-btn">Return to World ☀️</button>
+    </div>
+  </div>
+
+  <div id="pause-menu" class="hidden">
+    <div class="pause-box">
+      <div class="pause-sun-icon">⏸</div>
+      <div class="pause-title">PAUSED</div>
+      <div class="pause-energy-status" id="pause-energy-status"></div>
+      <div class="pause-chapter-status" id="pause-chapter-status"></div>
+      <button id="pause-resume" class="menu-btn primary">Resume Journey</button>
+      <button id="pause-restart" class="menu-btn tertiary">Restart</button>
+      <button id="pause-main-menu" class="menu-btn secondary">Main Menu</button>
+    </div>
+  </div>
+
+  <div id="ending-screen" class="hidden">
+    <div class="ending-content">
+      <div class="ending-particles" id="ending-particles"></div>
+      <div id="ending-sun"></div>
+      <div id="ending-type-badge"></div>
+      <div id="ending-title"></div>
+      <div id="ending-text"></div>
+      <div id="ending-stats"></div>
+      <div class="ending-actions">
+        <button id="ending-restart" class="menu-btn primary">Play Again</button>
+        <button id="ending-menu" class="menu-btn secondary">Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="game-canvas"></canvas>
+  <script src="game.js"></script>
+</body>
+
+</html>
